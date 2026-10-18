@@ -1,5 +1,4 @@
-import { InMemoryVacancyRepository } from "./inMemoryVacancyRepository";
-
+import { InMemoryVacancyRepository } from "./InMemoryVacancyRepository";
 const sampleVacancy = {title: 'QA Tester', company: 'Tech Andes', modality: 'remoto', salary: 800};
 
 describe('InMemoryVacancyRepository', () =>{
