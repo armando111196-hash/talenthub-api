@@ -4,16 +4,24 @@ import { InMemoryVacancyRepository } from './modules/vacancies/adapters/persiste
 import { VancacyService } from './modules/vacancies/application/VacancyService';
 import { createVacancyRouter } from './modules/vacancies/adapters/http/vacancyRoutes';
 import { errorHandler, notFoundHandler } from './shared/httpErrorHandlers';
+import { PostgresVacancyRepository } from './modules/vacancies/adapters/persistence/PostgresVacancyRepository';
+import { VacancyRepository } from './modules/vacancies/ports/VacancyRepository';
+import { createPostgresPool } from './shared/database/postgresPool';
 
 const app = express();
 
 app.use(express.json());
 
-//1) Respositorio donde se guardan las vacantes
-const vacancyRepository = new InMemoryVacancyRepository([
+const samplesVacancies = [
     {id: 1, title: 'Desarrollador Backend', company:'Tech Ander', modality: 'remoto', salary: 800},
     {id: 2, title: 'Analista de Datos', company:'DataSur', modality: 'híbrido', salary: 1200},
-]);
+];
+
+//Repositorio: Guardando las vacantes
+const vacancyRepository: VacancyRepository = process.env.DATABASE_URL
+    ? new PostgresVacancyRepository(createPostgresPool(process.env.DATABASE_URL))
+    : new InMemoryVacancyRepository(samplesVacancies);
+
 
 //2) Servicio (casos de uso)
 const vancacyService = new VancacyService(vacancyRepository);
